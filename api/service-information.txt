@@ -1,0 +1,19 @@
+Service Information
+service: pma-app-api
+stage: prod
+region: eu-west-2
+stack: pma-app-api-prod
+api keys:
+  None
+endpoints:
+  POST - https://h4fq2mq02e.execute-api.eu-west-2.amazonaws.com/prod/projects
+  GET - https://h4fq2mq02e.execute-api.eu-west-2.amazonaws.com/prod/projects/{id}
+  GET - https://h4fq2mq02e.execute-api.eu-west-2.amazonaws.com/prod/projects
+  PUT - https://h4fq2mq02e.execute-api.eu-west-2.amazonaws.com/prod/projects/{id}
+  DELETE - https://h4fq2mq02e.execute-api.eu-west-2.amazonaws.com/prod/projects/{id}
+functions:
+  create: pma-app-api-prod-create
+  get: pma-app-api-prod-get
+  list: pma-app-api-prod-list
+  update: pma-app-api-prod-update
+  delete: pma-app-api-prod-delete
