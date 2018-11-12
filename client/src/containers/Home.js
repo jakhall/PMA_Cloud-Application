@@ -62,6 +62,7 @@ renderprojectsList(projects) {
       <div className="lander">
         <h1>PMA</h1>
         <p>A Project Management App</p>
+        <p>Create an account to get started!</p>
       </div>
     );
   }
