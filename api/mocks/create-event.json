@@ -1,8 +1,8 @@
 {
-  "body": "{\"content\":\"hello world\"}",
+  "body": "{\"content\":\"hello world\",\"role\":\"project_manager\"}",
   "requestContext": {
     "identity": {
-      "cognitoIdentityId": "testuser1"
+      "cognitoIdentityId": "admin"
     }
   }
 }
