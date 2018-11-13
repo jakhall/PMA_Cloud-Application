@@ -89,6 +89,10 @@ export default class projects extends Component {
   }
 
 
+  deleteProject() {
+    return API.del("projects", `/projects/${this.props.match.params.id}`);
+  }
+
   handleDelete = async event => {
     event.preventDefault();
 
@@ -101,6 +105,14 @@ export default class projects extends Component {
     }
 
     this.setState({ isDeleting: true });
+
+    try {
+      await this.deleteProject();
+      this.props.history.push("/");
+    } catch (e) {
+      alert(e);
+      this.setState({ isDeleting: false });
+    }
   }
 
   render() {
