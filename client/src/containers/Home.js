@@ -3,6 +3,7 @@ import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import "./Home.css";
 import { API } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 export default class Home extends Component {
   constructor(props) {
     super(props);
@@ -57,15 +58,22 @@ renderprojectsList(projects) {
   );
 }
 
-  renderLander() {
-    return (
-      <div className="lander">
-        <h1>PMA</h1>
-        <p>A Project Management App</p>
-        <p>Create an account to get started!</p>
+renderLander() {
+  return (
+    <div className="lander">
+      <h1>PMA</h1>
+      <p>A project management app!</p>
+      <div>
+        <Link to="/login" className="btn btn-info btn-lg">
+          Login
+        </Link>
+        <Link to="/signup" className="btn btn-success btn-lg">
+          Signup
+        </Link>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   renderprojects() {
     return (
