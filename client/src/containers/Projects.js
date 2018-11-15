@@ -143,6 +143,8 @@ export default class projects extends Component {
               key={member.linkId}
               to={`/users/${member.linkId}`}
             >
+
+            {Auth.}
               <ListGroupItem header={member.userId}>
                 {"Created: " + new Date(member.addedAt).toLocaleString()}
               </ListGroupItem>

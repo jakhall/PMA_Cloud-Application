@@ -55,3 +55,12 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+
+  create:
+    handler: list.main
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: aws_iam
