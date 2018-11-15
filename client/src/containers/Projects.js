@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { API, Storage } from "aws-amplify";
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { API, Storage, Auth } from "aws-amplify";
+import { FormGroup, FormControl, ControlLabel, PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
+import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 import config from "../config";
 import "./Projects.css";
 
@@ -17,33 +19,37 @@ export default class projects extends Component {
       isLoading: null,
       isDeleting: null,
       project: null,
+      team: [],
       content: "",
       attachmentURL: null
     };
   }
 
   async componentDidMount() {
+
     try {
       let attachmentURL;
+      const team = await this.team();
+      this.state.team = team
       const project = await this.getproject();
-      const { content, attachment } = project;
-
-      if (attachment) {
-        attachmentURL = await Storage.vault.get(attachment);
-      }
-
+      const {content} = project;
       this.setState({
         project,
         content,
-        attachmentURL
       });
     } catch (e) {
       alert(e);
     }
+
   }
 
+  team() {
+    return API.get("pma-api", `/teams/${this.props.match.params.id}`);
+  }
+
+
   getproject() {
-    return API.get("projects", `/projects/${this.props.match.params.id}`);
+    return API.get("pma-api", `/projects/${this.props.match.params.id}`);
   }
 
   validateForm() {
@@ -65,7 +71,7 @@ export default class projects extends Component {
   }
 
   saveProject(project) {
-    return API.put("projects", `/projects/${this.props.match.params.id}`, {
+    return API.put("pma-api", `/projects/${this.props.match.params.id}`, {
       body: project
     });
   }
@@ -90,7 +96,7 @@ export default class projects extends Component {
 
 
   deleteProject() {
-    return API.del("projects", `/projects/${this.props.match.params.id}`);
+    return API.del("pma-api", `/projects/${this.props.match.params.id}`);
   }
 
   handleDelete = async event => {
@@ -114,6 +120,46 @@ export default class projects extends Component {
       this.setState({ isDeleting: false });
     }
   }
+
+
+
+  renderTeam() {
+        alert(this.state.team[0].userId)
+    return (
+      <div className="team">
+        <PageHeader>Team</PageHeader>
+        <ListGroup>
+          {!this.state.isLoading && this.renderTeamList(this.state.team)}
+        </ListGroup>
+      </div>
+    );
+  }
+
+  renderTeamList(team) {
+    return [{}].concat(team).map(
+      (member, i) =>
+        i !== 0
+          ? <LinkContainer
+              key={member.linkId}
+              to={`/users/${member.linkId}`}
+            >
+              <ListGroupItem header={member.userId}>
+                {"Created: " + new Date(member.addedAt).toLocaleString()}
+              </ListGroupItem>
+            </LinkContainer>
+          : <LinkContainer
+              key="new"
+              to="/teams/new"
+            >
+              <ListGroupItem>
+                <h4>
+                  <b>{"\uFF0B"}</b> Add member
+                </h4>
+              </ListGroupItem>
+            </LinkContainer>
+    );
+  }
+
 
   render() {
     return (
@@ -160,6 +206,11 @@ export default class projects extends Component {
               text="Delete"
               loadingText="Deleting…"
             />
+
+            <div className="Team">
+              { this.renderTeam()}
+            </div>
+
           </form>}
       </div>
     );

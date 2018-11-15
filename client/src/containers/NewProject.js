@@ -13,6 +13,7 @@ export default class NewProject extends Component {
 
     this.state = {
       isLoading: null,
+      newProject: null,
       content: ""
     };
   }
@@ -36,8 +37,12 @@ export default class NewProject extends Component {
     this.setState({ isLoading: true });
 
     try {
-      await this.createProject({
+      this.state.newProject = await this.createProject({
         content: this.state.content
+      });
+      this.addMember({
+        projectId: this.state.newProject.projectId,
+        role: "member"
       });
       this.props.history.push("/");
     } catch (e) {
@@ -48,9 +53,18 @@ export default class NewProject extends Component {
 
 
   createProject(project) {
-    return API.post("projects", "/projects", {
+    return API.post("pma-api", "/projects", {
       body: project
     });
+  }
+
+  addMember(link) {
+    const newLink = API.post("pma-api", "/teams", {
+      body: link
+    });
+
+    alert(newLink.linkId);
+    return newLink;
   }
 
   render() {

@@ -1,5 +1,5 @@
 #Serverless build instructions - defines functions and parameters.
-service: pma-api-blue
+service: pma-api-teams
 
 plugins:
   - serverless-webpack
@@ -10,17 +10,17 @@ custom:
     webpackConfig: ../../webpack.config.js
     includeModules: true
 
+
 provider:
   name: aws
   runtime: nodejs8.10
   stage: prod
   region: eu-west-2
-  cors:
-    true
-
-  authorizer:
-    aws_iam
-
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': prod-ApiGatewayRestApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': prod-ApiGatewayRestApiRootResourceId
 
   iamRoleStatements:
     - Effect: Allow
@@ -34,21 +34,31 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:eu-west-2:*:*"
 
+
 functions:
 
-
-#User functions:
-
-  get:
-    handler: get.main
-    events:
-      - http:
-          path: users/list
-          method: get
-
+#Team functions:
   list:
     handler: list.main
     events:
       - http:
-          path: users
+          path: teams/{id}
           method: get
+          cors: true
+          authorizer: aws_iam
+  create:
+    handler: create.main
+    events:
+        - http:
+            path: teams
+            method: post
+            cors: true
+            authorizer: aws_iam
+  delete:
+      handler: delete.main
+      events:
+        - http:
+            path: teams/{id}
+            method: delete
+            cors: true
+            authorizer: aws_iam

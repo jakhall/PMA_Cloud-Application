@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import "./Home.css";
-import { API } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
 export default class Home extends Component {
+
   constructor(props) {
     super(props);
-
     this.state = {
       isLoading: true,
       projects: []
@@ -15,22 +15,22 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-  if (!this.props.isAuthenticated) {
-    return;
-  }
+    if (!this.props.isAuthenticated) {
+      return;
+    }
 
-  try {
-    const projects = await this.projects();
-    this.setState({ projects });
-  } catch (e) {
-    alert(e);
-  }
+    try {
+      const projects = await this.projects();
+      this.setState({ projects });
+    } catch (e) {
+      alert(e);
+    }
 
   this.setState({ isLoading: false });
 }
 
 projects() {
-  return API.get("projects", "/projects");
+  return API.get("pma-api", "/users/list");
 }
 
 renderprojectsList(projects) {

@@ -1,5 +1,5 @@
 {
-  "name": "pma-app-api",
+  "name": "pma-api-projects",
   "version": "1.1.0",
   "description": "A Node.js starter for the Serverless Framework with async/await and unit test support",
   "main": "handler.js",
@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "middy": "^0.19.2",
     "serverless": "^1.32.0",
     "source-map-support": "^0.4.18",
     "uuid": "^3.3.2"

@@ -1,6 +1,7 @@
 {
+  "body": "{\"role\":\"manager\"}",
   "pathParameters": {
-    "id": "6dd9f9f0-e8fa-11e8-bd31-4d2b7b5f3f1e"
+    "id": "e47a7930-e7a2-11e8-80b0-0f6d0e07bc41"
   },
   "requestContext": {
     "identity": {

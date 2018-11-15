@@ -23,7 +23,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "projects",
+        name: "pma-api",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       },

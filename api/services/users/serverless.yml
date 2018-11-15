@@ -1,5 +1,5 @@
 #Serverless build instructions - defines functions and parameters.
-service: pma-api-blue
+service: pma-api-users
 
 plugins:
   - serverless-webpack
@@ -9,18 +9,18 @@ custom:
   webpack:
     webpackConfig: ../../webpack.config.js
     includeModules: true
+  stage: ${opt:stage, self:provider.stage}
 
 provider:
   name: aws
   runtime: nodejs8.10
   stage: prod
   region: eu-west-2
-  cors:
-    true
-
-  authorizer:
-    aws_iam
-
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': prod-ApiGatewayRestApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': prod-ApiGatewayRestApiRootResourceId
 
   iamRoleStatements:
     - Effect: Allow
@@ -34,8 +34,8 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:eu-west-2:*:*"
 
-functions:
 
+functions:
 
 #User functions:
 
@@ -43,12 +43,15 @@ functions:
     handler: get.main
     events:
       - http:
-          path: users/list
+          path: users
           method: get
-
+          cors: true
+          authorizer: aws_iam
   list:
     handler: list.main
     events:
       - http:
-          path: users
+          path: users/list
           method: get
+          cors: true
+          authorizer: aws_iam
