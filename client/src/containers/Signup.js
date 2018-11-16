@@ -7,7 +7,7 @@ import {
 } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import "./Signup.css";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 
 export default class Signup extends Component {
   constructor(props) {
@@ -17,6 +17,8 @@ export default class Signup extends Component {
       isLoading: false,
       email: "",
       password: "",
+      firstName: "Jak",
+      lastName: "Hall",
       confirmPassword: "",
       confirmationCode: "",
       newUser: null
@@ -48,9 +50,11 @@ export default class Signup extends Component {
 
     try {
       const newUser = await Auth.signUp({
-        username: "admin2",
+        username: "admin",
         password: this.state.password,
         attributes: {
+          given_name: this.state.firstName,
+          family_name: this.state.lastName,
           email: this.state.email
         }
       });
@@ -73,9 +77,14 @@ export default class Signup extends Component {
     this.setState({ isLoading: true });
 
     try {
-      await Auth.confirmSignUp("admin2", this.state.confirmationCode);
+      var test = await Auth.confirmSignUp("admin", this.state.confirmationCode);
       await Auth.signIn(this.state.email, this.state.password);
-
+      this.addUsertoDB({
+        username: "admin",
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        email: this.state.email
+      })
       this.props.userHasAuthenticated(true);
       this.props.history.push("/");
     } catch (e) {
@@ -84,6 +93,12 @@ export default class Signup extends Component {
     }
   }
 
+
+  addUsertoDB(user){
+    API.post("pma-api", "/users",{
+      body: user
+    })
+  }
 
   renderConfirmationForm() {
     return (

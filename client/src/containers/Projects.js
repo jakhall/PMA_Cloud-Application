@@ -95,6 +95,12 @@ export default class projects extends Component {
   }
 
 
+  getUser(user){
+    return API.put("pma-api", `/users`, {
+      body: user
+    });
+  }
+
   deleteProject() {
     return API.del("pma-api", `/projects/${this.props.match.params.id}`);
   }
@@ -124,10 +130,9 @@ export default class projects extends Component {
 
 
   renderTeam() {
-        alert(this.state.team[0].userId)
     return (
       <div className="team">
-        <PageHeader>Team</PageHeader>
+        <h3>Team</h3>
         <ListGroup>
           {!this.state.isLoading && this.renderTeamList(this.state.team)}
         </ListGroup>
@@ -140,12 +145,13 @@ export default class projects extends Component {
       (member, i) =>
         i !== 0
           ? <LinkContainer
-              key={member.linkId}
-              to={`/users/${member.linkId}`}
+              key={member.userId}
+              to={`/users/${member.userId}`}
             >
 
-            {Auth.}
-              <ListGroupItem header={member.userId}>
+            {alert(member.userId.split(/:(.+)/)[1])};
+
+              <ListGroupItem header={this.getUser({userId: member.userId.split(/:(.+)/)[1]}).firstName}>
                 {"Created: " + new Date(member.addedAt).toLocaleString()}
               </ListGroupItem>
             </LinkContainer>
@@ -166,6 +172,7 @@ export default class projects extends Component {
   render() {
     return (
       <div className="projects">
+      <h3>Details</h3>
         {this.state.project &&
           <form onSubmit={this.handleSubmit}>
             <FormGroup controlId="content">

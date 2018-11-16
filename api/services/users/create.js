@@ -10,7 +10,7 @@ export function main(event, context, callback) {
   const params = {
       TableName: "USER_Table",
       Item: {
-        userId: data.userId,
+        userId: event.requestContext.identity.cognitoIdentityId,
         username: data.username,
         firstName: data.firstName,
         lastName: data.lastName,

@@ -62,8 +62,7 @@ export default class NewProject extends Component {
     const newLink = API.post("pma-api", "/teams", {
       body: link
     });
-
-    alert(newLink.linkId);
+    
     return newLink;
   }
 

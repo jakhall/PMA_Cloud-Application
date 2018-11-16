@@ -57,7 +57,7 @@ functions:
           authorizer: aws_iam
 
   create:
-    handler: list.main
+    handler: create.main
     events:
       - http:
           path: users

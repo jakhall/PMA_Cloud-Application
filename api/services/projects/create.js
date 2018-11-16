@@ -7,6 +7,12 @@ export function main(event, context, callback) {
   // Request body is passed in as a JSON encoded string in 'event.body'
   const data = JSON.parse(event.body);
 
+  const authProvider = event.requestContext.identity.cognitoAuthenticationProvider;
+  const parts = authProvider.split(':');
+  const userPoolIdParts = parts[parts.length - 3].split('/');
+  const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
+  const userPoolUserId = parts[parts.length - 1];
+
   const params = {
     TableName: "PROJECT_Table",
     Item: {
