@@ -42,7 +42,7 @@ export default class NewProject extends Component {
       });
       this.addMember({
         projectId: this.state.newProject.projectId,
-        role: "member"
+        role: "Manager"
       });
       this.props.history.push("/");
     } catch (e) {
@@ -62,7 +62,7 @@ export default class NewProject extends Component {
     const newLink = API.post("pma-api", "/teams", {
       body: link
     });
-    
+
     return newLink;
   }
 

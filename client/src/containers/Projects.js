@@ -18,8 +18,9 @@ export default class projects extends Component {
     this.state = {
       isLoading: null,
       isDeleting: null,
+      isReady: null,
       project: null,
-      team: [],
+      team: null,
       content: "",
       attachmentURL: null
     };
@@ -27,26 +28,43 @@ export default class projects extends Component {
 
   async componentDidMount() {
 
+
     try {
-      let attachmentURL;
-      const team = await this.team();
-      this.state.team = team
-      const project = await this.getproject();
-      const {content} = project;
+
+      const teamIds = await this.team();
+      const team = await this.getTeamUsers(teamIds);
       this.setState({
-        project,
-        content,
-      });
+        team
+     });
+
+     this.state.isReady = true;
+
     } catch (e) {
       alert(e);
     }
 
+    try {
+      let attachmentURL;
+      const project = await this.getproject();
+      const {content} = project;
+
+
+      this.setState({
+        project,
+        content,
+      });
+
+    } catch (e) {
+      alert(e);
+    }
+
+
   }
+
 
   team() {
     return API.get("pma-api", `/teams/${this.props.match.params.id}`);
   }
-
 
   getproject() {
     return API.get("pma-api", `/projects/${this.props.match.params.id}`);
@@ -95,10 +113,8 @@ export default class projects extends Component {
   }
 
 
-  getUser(user){
-    return API.put("pma-api", `/users`, {
-      body: user
-    });
+  getUser(userId){
+    return API.get("pma-api", `/users/${userId}`);
   }
 
   deleteProject() {
@@ -127,7 +143,15 @@ export default class projects extends Component {
     }
   }
 
-
+ async getUserObject(user){
+  var res = null;
+  await this.getUser(user.userId).then(function(result){
+     res = result;
+   })
+   res.addedAt = user.addedAt;
+   res.role = user.role;
+   return res;
+ }
 
   renderTeam() {
     return (
@@ -140,6 +164,20 @@ export default class projects extends Component {
     );
   }
 
+
+  async getTeamUsers(team){
+    var newd = [];
+    var member = null;
+    var glob = this;
+
+    for(const m of team){
+      member = await this.getUserObject(m);
+      newd.push(member)
+    }
+
+    return newd;
+  }
+
   renderTeamList(team) {
     return [{}].concat(team).map(
       (member, i) =>
@@ -148,16 +186,14 @@ export default class projects extends Component {
               key={member.userId}
               to={`/users/${member.userId}`}
             >
-
-            {alert(member.userId.split(/:(.+)/)[1])};
-
-              <ListGroupItem header={this.getUser({userId: member.userId.split(/:(.+)/)[1]}).firstName}>
-                {"Created: " + new Date(member.addedAt).toLocaleString()}
+              <ListGroupItem header={member.username}>
+                {"Added: " + new Date(member.addedAt).toLocaleString()}
+                {" Role: " + member.role}
               </ListGroupItem>
             </LinkContainer>
           : <LinkContainer
               key="new"
-              to="/teams/new"
+              to="/users/new"
             >
               <ListGroupItem>
                 <h4>
@@ -167,7 +203,6 @@ export default class projects extends Component {
             </LinkContainer>
     );
   }
-
 
   render() {
     return (
@@ -215,12 +250,12 @@ export default class projects extends Component {
               text="Delete"
               loadingText="Deleting…"
             />
-
-            <div className="Team">
-              { this.renderTeam()}
-            </div>
-
           </form>}
+        {this.state.project &&
+          <div className="Project">
+            { this.renderTeam()}
+          </div>}
+
       </div>
     );
   }

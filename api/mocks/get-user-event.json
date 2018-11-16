@@ -1,0 +1,8 @@
+{
+  "body": "{\"userId\":\"eu-west-2:49554a04-c111-4c16-9291-aadbe22ee813\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "admin"
+    }
+  }
+}
