@@ -8,7 +8,7 @@ export async function main(event, context) {
 
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
-      ":userId": event.requestContext.identity.cognitoIdentityId,
+      ":userId": event.pathParameters.id
     }
   };
 

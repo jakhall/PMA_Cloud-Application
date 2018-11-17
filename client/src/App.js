@@ -1,9 +1,9 @@
 
 import { Link, withRouter } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { Nav, Navbar, NavItem } from "react-bootstrap";
+import { Nav, Navbar, NavItem, Button, DropdownButton, MenuItem, FormGroup, FormControl} from "react-bootstrap";
 import Routes from "./Routes";
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment} from "react";
 import "./App.css";
 import { Auth } from "aws-amplify";
 
@@ -14,7 +14,8 @@ class App extends Component {
 
       this.state = {
         isAuthenticated: false,
-        isAuthenticating: true
+        isAuthenticating: true,
+        selectedSearch: 0
       };
     }
 
@@ -52,17 +53,22 @@ class App extends Component {
       userHasAuthenticated: this.userHasAuthenticated
     };
 
+    const glob = this;
+
+    const searchOptions = ["User", "Project"]
+
     return (
+
       !this.state.isAuthenticating &&
       <div className="App container">
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/">PMA</Link>
+              <Link to="/">Proton</Link>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
-          <Navbar.Collapse>
+          <Navbar.Collapse className="collapse">
             <Nav pullRight>
               {this.state.isAuthenticated
                 ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
@@ -76,6 +82,25 @@ class App extends Component {
                   </Fragment>
               }
             </Nav>
+              <Navbar.Form pullRight>
+                <FormGroup>
+                  <FormControl type="text" placeholder="Search" />
+                  </FormGroup>{' '}
+
+                  <DropdownButton
+                   key={0}
+                   title={"Search for: " + searchOptions[this.state.selectedSearch]}
+                   id="role"
+                   onSelect={function(evt){glob.setState({selectedSearch: evt})}}
+                   className="drop"
+                   >
+                    <MenuItem eventKey={0}>User</MenuItem >
+                    <MenuItem eventKey={1}>Project</MenuItem >
+
+                  </DropdownButton>
+
+              </Navbar.Form>
+
           </Navbar.Collapse>
         </Navbar>
         <Routes childProps={childProps} />

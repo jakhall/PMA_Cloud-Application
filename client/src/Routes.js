@@ -8,6 +8,7 @@ import Signup from "./containers/Signup";
 import NewProject from "./containers/NewProject";
 import ManageTeam from "./containers/ManageTeam";
 import Projects from "./containers/Projects";
+import Users from "./containers/Users";
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 
@@ -20,6 +21,7 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/new" exact component={NewProject} props={childProps} />
     <AuthenticatedRoute path="/projects/:id" exact component={Projects} props={childProps} />
     <AuthenticatedRoute path="/projects/:id/manage" exact component={ManageTeam} props={childProps} />
+    <AuthenticatedRoute path="/users/:id/" exact component={Users} props={childProps} />
     { /* Finally, catch all unmatched routes */ }
     <Route component={NotFound} />
   </Switch>;

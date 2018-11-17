@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
-import "./Home.css";
+import "./Search.css";
 import { API, Auth } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
-export default class Home extends Component {
+export default class Search extends Component {
 
   constructor(props) {
     super(props);
