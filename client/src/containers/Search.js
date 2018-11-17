@@ -10,7 +10,8 @@ export default class Search extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      projects: [],
+      projects: null,
+      users: null,
       user: null
     };
   }
@@ -21,10 +22,13 @@ export default class Search extends Component {
     }
 
     try {
-      const projects = await this.projects();
-      const {id}= await Auth.currentUserInfo()
-      const user = await this.getUser(id);
-      this.setState({ projects, user});
+      if(!this.props.match.params.type.localeCompare("projects")){
+        const projects = await this.projectSearch();
+        this.setState({ projects, selectedSearch: 1});
+      } else {
+        const users = await this.userSearch();
+        this.setState({ users});
+      }
     } catch (e) {
       alert(e);
     }
@@ -32,9 +36,13 @@ export default class Search extends Component {
   this.setState({ isLoading: false });
 }
 
-projects() {
-  return API.get("pma-api", "/users/list");
-}
+  projectSearch() {
+    return API.get("pma-api", `/projects/search/${this.props.match.params.search}`);
+  }
+
+  userSearch() {
+    return API.get("pma-api", `/users/search/${this.props.match.params.search}`);
+  }
 
 
  getUser(userId){
@@ -42,81 +50,49 @@ projects() {
   }
 
 
-renderprojectsList(projects) {
-  return [{}].concat(projects).map(
-    (project, i) =>
-      i !== 0
-        ? <LinkContainer
-            key={project.projectId}
-            to={`/projects/${project.projectId}`}
-          >
-            <ListGroupItem header={project.content.trim().split("\n")[0]}>
-              {"Created: " + new Date(project.createdAt).toLocaleString()}
-            </ListGroupItem>
-          </LinkContainer>
-        : <LinkContainer
-            key="new"
-            to="/projects/new"
-          >
-            <ListGroupItem>
-              <h4>
-                <b>{"\uFF0B"}</b> Create a new project
-              </h4>
-            </ListGroupItem>
-          </LinkContainer>
-  );
-}
 
-renderLander() {
-  return (
-    <div className="lander">
-      <h1>Proton</h1>
-      <p>A project management app!</p>
-      <div>
-        <Link to="/login" className="btn btn-info btn-lg">
-          Login
-        </Link>
-        <Link to="/signup" className="btn btn-success btn-lg">
-          Signup
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-
-  renderProfile(){
-    return(
-      <div className="projects">
-      <h3>Your Profile</h3>
-      {!this.state.isLoading &&
-      <LinkContainer
-        key={this.state.user.userId}
-        to={`/users/${this.state.user.userId}`}
-      >
-        <ListGroupItem header={this.state.user.firstName + " " + this.state.user.lastName + " (" + this.state.user.username + ")"}>
-        </ListGroupItem>
-      </LinkContainer>}
-      </div>
+  renderprojectsList(projects) {
+    return [{}].concat(projects).map(
+      (project, i) =>
+        i !== 0
+           && <LinkContainer
+              key={project.projectId}
+              to={`/projects/${project.projectId}`}
+            >
+              <ListGroupItem header={project.content.trim().split("\n")[0]}>
+                {"Created: " + new Date(project.createdAt).toLocaleString()}
+              </ListGroupItem>
+            </LinkContainer>
     );
   }
 
-  renderprojects() {
-    return (
-      <div className="projects">
-        {this.renderProfile()}
-        <h3>Collaboration</h3>
-        <ListGroup>
-          {!this.state.isLoading && this.renderprojectsList(this.state.projects)}
-        </ListGroup>
-      </div>
-    );
-  }
+    renderusersList(users) {
+      return [{}].concat(users).map(
+        (user, i) =>
+          i !== 0 &&
+             <LinkContainer
+                key={user.userId}
+                to={`/users/${user.userId}`}
+              >
+                <ListGroupItem header={user.firstName + " " + user.lastName + " (" + user.username + ")"}>
+                </ListGroupItem>
+              </LinkContainer>
+          );
+        }
+
 
   render() {
     return (
-      <div className="Home">
-        {this.props.isAuthenticated ? this.renderprojects() : this.renderLander()}
+      <div className="Search">
+        <h3> Results: </h3>
+        {this.state.projects &&
+        <div>
+        {this.renderprojectsList(this.state.projects)}
+        </div>}
+        {this.state.users &&
+        <div>
+        {this.renderusersList(this.state.users)}
+        </div>}
       </div>
     );
   }

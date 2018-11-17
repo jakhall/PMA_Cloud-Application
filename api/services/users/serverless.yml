@@ -74,3 +74,12 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+
+  search:
+    handler: search.main
+    events:
+      - http:
+          path: users/search/{search}
+          method: get
+          cors: true
+          authorizer: aws_iam

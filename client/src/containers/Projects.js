@@ -18,9 +18,12 @@ export default class projects extends Component {
     this.state = {
       isLoading: null,
       isDeleting: null,
+      isJoining: null,
       isReady: null,
       project: null,
       team: null,
+      user: null,
+      userRole: null,
       content: "",
       attachmentURL: null
     };
@@ -28,14 +31,19 @@ export default class projects extends Component {
 
   async componentDidMount() {
 
-
     try {
-
+      const {id} = await Auth.currentUserInfo();
+      const user = await this.getCurrentUser(id);
+      this.setState({user});
       const teamIds = await this.team();
       const team = await this.getTeamUsers(teamIds);
       this.setState({
         team
      });
+
+     if(user.admin){
+       this.setState({userRole: "Admin"});
+     }
 
      this.state.isReady = true;
 
@@ -59,6 +67,11 @@ export default class projects extends Component {
     }
 
   }
+
+  getCurrentUser(userId){
+    return API.get("pma-api", `/users/${userId}`);
+  }
+
 
   team() {
     return API.get("pma-api", `/teams/${this.props.match.params.id}`);
@@ -143,11 +156,17 @@ export default class projects extends Component {
 
  async getUserObject(user){
   var res = null;
+  const glob = this;
   await this.getUser(user.userId).then(function(result){
      res = result;
+
    })
+
    res.addedAt = user.addedAt;
    res.role = user.role;
+   if(!res.userId.localeCompare(this.state.user.username)){
+     this.setState({userRole: res.role});
+   }
    return res;
  }
 
@@ -203,31 +222,34 @@ export default class projects extends Component {
 
   render() {
     return (
-      <div className="projects">
+      <div className="Projects">
       <h3>Details</h3>
-        {this.state.project &&
+
+      {this.state.isReady &&
+        this.state.userRole == null &&
+      <div className="join-container">
+        <LoaderButton
+          block
+          bsStyle="warning"
+          bsSize="large"
+          isLoading={this.state.isJoining}
+          onClick={this.handleJoin}
+          text="Join"
+          loadingText="Joining.."
+        />
+      </div>}
+
           <form onSubmit={this.handleSubmit}>
+            {this.state.project &&
             <FormGroup controlId="content">
               <FormControl
                 onChange={this.handleChange}
                 value={this.state.content}
                 componentClass="textarea"
               />
-            </FormGroup>
-            {this.state.project.attachment &&
-              <FormGroup>
-                <ControlLabel>Attachment</ControlLabel>
-                <FormControl.Static>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={this.state.attachmentURL}
-                  >
-                    {this.formatFilename(this.state.project.attachment)}
-                  </a>
-                </FormControl.Static>
-              </FormGroup>}
-
+            </FormGroup>}
+            {this.state.isReady && (this.state.userRole.localeCompare("Admin") || this.state.userRole.localeCompare("Manager")) &&
+            <div>
             <LoaderButton
               block
               bsStyle="primary"
@@ -247,8 +269,9 @@ export default class projects extends Component {
               text="Delete"
               loadingText="Deleting…"
             />
-          </form>}
-        {this.state.project &&
+            </div>}
+          </form>
+        {this.state.team &&
           <div className="Project">
             { this.renderTeam()}
           </div>}

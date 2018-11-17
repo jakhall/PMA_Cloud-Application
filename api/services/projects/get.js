@@ -5,7 +5,6 @@ export async function main(event, context) {
   const params = {
     TableName: "PROJECT_Table",
     Key: {
-      userId: event.requestContext.identity.cognitoIdentityId,
       projectId: event.pathParameters.id
     }
   };

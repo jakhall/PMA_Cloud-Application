@@ -6,17 +6,20 @@ export async function main(event, context) {
   const params = {
     TableName: "PROJECT_Table",
 
-    KeyConditionExpression: "userId = :userId",
+    FilterExpression: "#userId = :userId",
+    ExpressionAttributeNames: {
+      "#userId": 'userId'
+    },
     ExpressionAttributeValues: {
       ":userId": event.requestContext.identity.cognitoIdentityId,
     }
   };
 
     try {
-      const result = await dynamoDbLib.call("query", params);
+      const result = await dynamoDbLib.call("scan", params);
       // Return the matching list of items in response body
       return success(result.Items);
     } catch (e) {
-      return failure({ status: false });
+      return failure({ status: e });
     }
   }

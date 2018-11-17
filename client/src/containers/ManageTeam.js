@@ -162,11 +162,6 @@ export default class ManageTeam extends React.Component {
 
 
   render() {
-    const options = [
-       // ...
-       { value: 'Stanford University', label: 'Stanford' },
-       // ...
-    ];
     const glob = this;
     const roles = ["Role", "Developer", "Manager"]
 

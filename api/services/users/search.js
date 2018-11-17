@@ -3,10 +3,12 @@ import { success, failure } from "../../libs/response-lib";
 
 export async function main(event, context) {
   const params = {
-    TableName: "PROJECT_Table",
-    FilterExpression: "begins_with(#content, :qStandard) OR begins_with(#content, :qCapital)",
+    TableName: "USER_Table",
+    FilterExpression: "begins_with(#firstname, :qStandard) OR begins_with(#firstname, :qCapital) OR begins_with(#lastname, :qStandard) OR begins_with(#lastname, :qCapital) OR begins_with(#username, :qStandard) OR begins_with(#username, :qCapital)",
     ExpressionAttributeNames: {
-     '#content': 'content'
+     '#firstname': 'firstName',
+     '#lastname': 'lastName',
+     '#username': 'username'
     },
     ExpressionAttributeValues: {
      ':qStandard': event.pathParameters.search,

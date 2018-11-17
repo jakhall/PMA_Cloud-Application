@@ -7,3 +7,13 @@
   height: 300px;
   font-size: 24px;
 }
+
+.Projects .join-container {
+  width: 20%;
+  float: right;
+  right:0px;
+}
+
+.Projects h3 {
+  float: left;
+}

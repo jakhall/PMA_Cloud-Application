@@ -15,7 +15,8 @@ class App extends Component {
       this.state = {
         isAuthenticated: false,
         isAuthenticating: true,
-        selectedSearch: 0
+        selectedSearch: 0,
+        query: ""
       };
     }
 
@@ -47,6 +48,13 @@ class App extends Component {
   this.props.history.push("/login");
 }
 
+  handleSearch(query) {
+    const options = ["users", "projects"];
+
+    window.location.assign('/search/' + options[this.state.selectedSearch] + '/' + query)
+
+  }
+
   render() {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
@@ -56,6 +64,7 @@ class App extends Component {
     const glob = this;
 
     const searchOptions = ["User", "Project"]
+
 
     return (
 
@@ -82,15 +91,21 @@ class App extends Component {
                   </Fragment>
               }
             </Nav>
-              <Navbar.Form pullRight>
+              <Navbar.Form pullRight onSubmit={this.handleSubmit}>
                 <FormGroup>
-                  <FormControl type="text" placeholder="Search" />
-                  </FormGroup>{' '}
 
+
+                  <FormControl
+                   onKeyPress={event => {if (event.key === "Enter") {
+                       this.handleSearch(event.target.value); }}}
+                  type="text"
+                  placeholder="Search" />
+
+                  </FormGroup>{' '}
                   <DropdownButton
                    key={0}
                    title={"Search for: " + searchOptions[this.state.selectedSearch]}
-                   id="role"
+                   id="type"
                    onSelect={function(evt){glob.setState({selectedSearch: evt})}}
                    className="drop"
                    >
