@@ -17,8 +17,8 @@ export default class Signup extends Component {
       isLoading: false,
       email: "",
       password: "",
-      firstName: "Jak",
-      lastName: "Hall",
+      firstName: "David",
+      lastName: "Green",
       confirmPassword: "",
       confirmationCode: "",
       newUser: null
@@ -50,7 +50,7 @@ export default class Signup extends Component {
 
     try {
       const newUser = await Auth.signUp({
-        username: "admin",
+        username: "David23",
         password: this.state.password,
         attributes: {
           given_name: this.state.firstName,
@@ -77,10 +77,10 @@ export default class Signup extends Component {
     this.setState({ isLoading: true });
 
     try {
-      var test = await Auth.confirmSignUp("admin", this.state.confirmationCode);
+      var test = await Auth.confirmSignUp("David23", this.state.confirmationCode);
       await Auth.signIn(this.state.email, this.state.password);
       this.addUsertoDB({
-        username: "admin",
+        username: "David23",
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         email: this.state.email

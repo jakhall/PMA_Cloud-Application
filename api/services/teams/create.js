@@ -13,11 +13,16 @@ export function main(event, context, callback) {
   const userPoolId = userPoolIdParts[userPoolIdParts.length - 1];
   const userPoolUserId = parts[parts.length - 1];
 
+  var user = event.requestContext.identity.cognitoIdentityId;
+
+  if(data.userId != null){
+    user = data.userId;
+  }
+
   const params = {
       TableName: "TEAM_Table",
       Item: {
-        linkId:  uuid.v1(),
-        userId: event.requestContext.identity.cognitoIdentityId,
+        userId: user,
         projectId: data.projectId,
         role: data.role,
         addedAt: Date.now()

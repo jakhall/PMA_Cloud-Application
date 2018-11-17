@@ -41,6 +41,7 @@ export default class NewProject extends Component {
         content: this.state.content
       });
       this.addMember({
+        userId: null,
         projectId: this.state.newProject.projectId,
         role: "Manager"
       });

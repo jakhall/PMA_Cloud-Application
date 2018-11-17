@@ -58,9 +58,7 @@ export default class projects extends Component {
       alert(e);
     }
 
-
   }
-
 
   team() {
     return API.get("pma-api", `/teams/${this.props.match.params.id}`);
@@ -186,18 +184,17 @@ export default class projects extends Component {
               key={member.userId}
               to={`/users/${member.userId}`}
             >
-              <ListGroupItem header={member.username}>
+              <ListGroupItem header={member.firstName + " " + member.lastName + " (" + member.role + ")"}>
                 {"Added: " + new Date(member.addedAt).toLocaleString()}
-                {" Role: " + member.role}
               </ListGroupItem>
             </LinkContainer>
           : <LinkContainer
-              key="new"
-              to="/users/new"
+
+              to={`/projects/${this.props.match.params.id}/manage`}
             >
               <ListGroupItem>
                 <h4>
-                  <b>{"\uFF0B"}</b> Add member
+                  <b>{"\uFF0B"}</b> Manage Team
                 </h4>
               </ListGroupItem>
             </LinkContainer>

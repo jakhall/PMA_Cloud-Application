@@ -1,0 +1,44 @@
+
+.ManageTeam form {
+  width: 100%;
+  margin: auto;
+  padding-bottom: 15px;
+}
+
+.ManageTeam textarea {
+  height: 300px;
+  font-size: 24px;
+}
+
+.ManageTeam .form-container{
+  border: 2px solid red;
+  width: 60%;
+  align: center;
+}
+
+.ManageTeam .searchAll {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+.ManageTeam .role-select {
+  float:left;
+  width: 10%;
+  padding: 10px;
+}
+
+.ManageTeam .ldButton {
+  float: right;
+  width: 25%;
+  padding: 10px;
+}
+
+
+.ManageTeam .clear {
+  clear: both;
+}
+.LoaderButton {
+  width: 100%;
+  padding: 10px;
+}

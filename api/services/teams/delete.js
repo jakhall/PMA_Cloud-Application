@@ -2,10 +2,13 @@ import * as dynamoDbLib from "../../libs/dynamodb-lib";
 import { success, failure } from "../../libs/response-lib";
 
 export async function main(event, context) {
+
+  const data = JSON.parse(event.body);
+
   const params = {
     TableName: "TEAM_Table",
     Key: {
-      userId: event.requestContext.identity.cognitoIdentityId,
+      userId: data.userId,
       projectId: event.pathParameters.id
     }
   };
@@ -15,6 +18,6 @@ export async function main(event, context) {
     return success({ status: true });
   } catch (e) {
     console.log(e);
-    return failure({ status: false });
+    return failure({ status: e });
   }
 }
