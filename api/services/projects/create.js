@@ -18,7 +18,9 @@ export function main(event, context, callback) {
     Item: {
       userId: event.requestContext.identity.cognitoIdentityId,
       projectId: uuid.v1(),
-      content: data.content,
+      title: data.title,
+      description: data.description,
+      projectStatus: data.projectStatus,
       createdAt: Date.now()
     }
   };

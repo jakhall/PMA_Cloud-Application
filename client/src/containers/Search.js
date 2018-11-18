@@ -59,7 +59,7 @@ export default class Search extends Component {
               key={project.projectId}
               to={`/projects/${project.projectId}`}
             >
-              <ListGroupItem header={project.content.trim().split("\n")[0]}>
+              <ListGroupItem header={project.name.trim().split("\n")[0]}>
                 {"Created: " + new Date(project.createdAt).toLocaleString()}
               </ListGroupItem>
             </LinkContainer>

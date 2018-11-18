@@ -50,7 +50,7 @@ renderprojectsList(projects) {
             key={project.projectId}
             to={`/projects/${project.projectId}`}
           >
-            <ListGroupItem header={project.content.trim().split("\n")[0]}>
+            <ListGroupItem header={project.title.trim().split("\n")[0]}>
               {"Created: " + new Date(project.createdAt).toLocaleString()}
             </ListGroupItem>
           </LinkContainer>
@@ -105,7 +105,7 @@ renderLander() {
     return (
       <div className="projects">
         {this.renderProfile()}
-        <h3>Collaboration</h3>
+        <h3>Collaborations</h3>
         <ListGroup>
           {!this.state.isLoading && this.renderprojectsList(this.state.projects)}
         </ListGroup>

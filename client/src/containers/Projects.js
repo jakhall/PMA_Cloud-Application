@@ -24,8 +24,10 @@ export default class projects extends Component {
       team: null,
       user: null,
       userRole: null,
-      content: "",
-      attachmentURL: null
+      projectName: "",
+      projectStatus: "",
+      projectDesc: "",
+      statColour: null
     };
   }
 
@@ -41,11 +43,11 @@ export default class projects extends Component {
         team
      });
 
-     if(user.admin){
-       this.setState({userRole: "Admin"});
-     }
-
      this.state.isReady = true;
+
+     if(this.state.userRole == null && this.state.user.admin){
+       this.state.userRole = 0;
+     }
 
     } catch (e) {
       alert(e);
@@ -54,12 +56,20 @@ export default class projects extends Component {
     try {
       let attachmentURL;
       const project = await this.getproject();
-      const {content} = project;
-
+      const {title, description, projectStatus} = project;
+      var colour = "success";
+      if(!projectStatus.localeCompare("Active")){
+        colour = "warning";
+      } else if(!projectStatus.localeCompare("Pending")){
+        colour = "primary";
+      }
 
       this.setState({
         project,
-        content,
+        projectStatus,
+        projectName: title,
+        projectDesc: description,
+        statColour: colour
       });
 
     } catch (e) {
@@ -82,7 +92,7 @@ export default class projects extends Component {
   }
 
   validateForm() {
-    return this.state.content.length > 0;
+    return this.state.projectName.length > 0;
   }
 
   formatFilename(str) {
@@ -105,22 +115,9 @@ export default class projects extends Component {
     });
   }
 
-  handleSubmit = async event => {
-    let attachment;
-
-    event.preventDefault();
-
-    this.setState({ isLoading: true });
-
-    try {
-      await this.saveProject({
-        content: this.state.content,
-      });
-      this.props.history.push("/");
-    } catch (e) {
-      alert(e);
-      this.setState({ isLoading: false });
-    }
+  handleEdit = async event => {
+    this.props.history.push("/");
+    window.location.assign('/projects/' + this.props.match.params.id  + '/edit');
   }
 
 
@@ -164,7 +161,7 @@ export default class projects extends Component {
 
    res.addedAt = user.addedAt;
    res.role = user.role;
-   if(!res.userId.localeCompare(this.state.user.username)){
+   if(!res.userId.localeCompare(this.state.user.userId)){
      this.setState({userRole: res.role});
    }
    return res;
@@ -181,6 +178,23 @@ export default class projects extends Component {
     );
   }
 
+
+  handleJoin = async event => {
+    this.setState({isJoining: true});
+    await this.joinProject({
+      projectId: this.props.match.params.id,
+      role: "Developer"
+    })
+    this.setState({isJoining: false});
+    await this.componentDidMount();
+    this.render();
+  }
+
+  async joinProject(project){
+   return API.post("pma-api", "/teams", {
+     body: project
+   });
+  }
 
   async getTeamUsers(team){
     var newd = [];
@@ -220,13 +234,36 @@ export default class projects extends Component {
     );
   }
 
+
+
+  roleCheck(){
+    if(this.state.userRole && this.state.user){
+      return true;
+    }
+    return false;
+  }
+
+
   render() {
     return (
       <div className="Projects">
-      <h3>Details</h3>
+      <h1> {this.state.projectName} </h1>
+      <h3> Status </h3>
+      {this.state.statColour &&
+      <LoaderButton readOnly
+        block
+        bsStyle={this.state.statColour}
+        bsSize="medium"
+        isLoading={this.state.isJoining}
+        text={this.state.projectStatus}
+        loadingText="Joining.."
+        className="status"
+      />}
+
+      <h3 className="details">Details</h3>
 
       {this.state.isReady &&
-        this.state.userRole == null &&
+        (this.state.userRole == null || this.state.userRole == 0) &&
       <div className="join-container">
         <LoaderButton
           block
@@ -239,36 +276,28 @@ export default class projects extends Component {
         />
       </div>}
 
-          <form onSubmit={this.handleSubmit}>
+          <form>
             {this.state.project &&
             <FormGroup controlId="content">
-              <FormControl
-                onChange={this.handleChange}
-                value={this.state.content}
+              <FormControl readOnly
+                value={this.state.projectDesc}
                 componentClass="textarea"
               />
             </FormGroup>}
-            {this.state.isReady && (this.state.userRole.localeCompare("Admin") || this.state.userRole.localeCompare("Manager")) &&
+            {this.roleCheck() &&
             <div>
-            <LoaderButton
-              block
-              bsStyle="primary"
-              bsSize="large"
-              disabled={!this.validateForm()}
-              type="submit"
-              isLoading={this.state.isLoading}
-              text="Save"
-              loadingText="Saving…"
-            />
-            <LoaderButton
-              block
-              bsStyle="danger"
-              bsSize="large"
-              isLoading={this.state.isDeleting}
-              onClick={this.handleDelete}
-              text="Delete"
-              loadingText="Deleting…"
-            />
+              {(this.state.userRole || this.state.user.admin) &&
+                (this.state.userRole.localeCompare("Developer") || this.state.user.admin)  &&
+                  <LoaderButton
+                    block
+                    bsStyle="primary"
+                    bsSize="large"
+                    disabled={!this.validateForm()}
+                    isLoading={this.state.isLoading}
+                    text="Edit"
+                    onClick={this.handleEdit}
+                    loadingText="Editing…"
+                  />}
             </div>}
           </form>
         {this.state.team &&

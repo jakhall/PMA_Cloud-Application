@@ -92,7 +92,7 @@ export default class ManageTeam extends React.Component {
     } catch (e) {
       alert(e);
     }
-    alert("Added");
+    alert("Removed");
     this.setState({
       isDeleting: false,
       removeSelected: null

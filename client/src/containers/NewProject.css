@@ -1,8 +1,17 @@
 .NewProject form {
+  width: 80%;
   padding-bottom: 15px;
 }
 
-.NewProject form textarea {
-  height: 300px;
+.NewProject .desc {
+  height: 250px;
   font-size: 24px;
+}
+
+.NewProject .drop {
+  width: 150px;
+}
+
+.NewProject .ldButton {
+  margin-top: 20px;
 }

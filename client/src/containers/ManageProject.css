@@ -1,0 +1,22 @@
+.ManageProject form {
+  width: 100%;
+  margin:auto;
+  padding-bottom: 15px;
+}
+
+.ManageProject .desc {
+  height: 250px;
+  font-size: 24px;
+}
+
+.ManageProject .name {
+  font-size: 24px;
+}
+
+.ManageProject .drop {
+  width: 150px;
+}
+
+.ManageProject .ldButton {
+  margin-top: 20px;
+}

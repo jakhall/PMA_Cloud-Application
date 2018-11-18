@@ -63,10 +63,6 @@ export default class projects extends Component {
     return API.get("pma-api", `/teams/${this.props.match.params.id}`);
   }
 
-  validateForm() {
-    return this.state.content.length > 0;
-  }
-
   formatFilename(str) {
     return str.replace(/^\w+-/, "");
   }
@@ -171,7 +167,7 @@ export default class projects extends Component {
               key={project.projectId}
               to={`/projects/${project.projectId}`}
             >
-              <ListGroupItem header={project.content.trim().split("\n")[0]}>
+              <ListGroupItem header={project.name.trim().split("\n")[0]}>
                 {"Created: " + new Date(project.createdAt).toLocaleString()}
               </ListGroupItem>
             </LinkContainer>
@@ -226,7 +222,6 @@ export default class projects extends Component {
               block
               bsStyle="primary"
               bsSize="large"
-              disabled={!this.validateForm()}
               type="submit"
               isLoading={this.state.isLoading}
               text="Save"
