@@ -11,7 +11,8 @@ export default class Home extends Component {
     this.state = {
       isLoading: true,
       projects: [],
-      user: null
+      user: null,
+      statusColour: null
     };
   }
 
@@ -32,14 +33,36 @@ export default class Home extends Component {
   this.setState({ isLoading: false });
 }
 
-projects() {
-  return API.get("pma-api", "/users/list");
+async projects() {
+  var projects = [];
+  var proj = null;
+  const projectLinks = await API.get("pma-api", "/users/list");
+  for(const p of projectLinks){
+    proj = await this.getProject(p.projectId);
+    proj.role = p.role;
+    projects.push(proj)
+  }
+
+  return projects;
 }
 
+
+getProject(id) {
+  return API.get("pma-api", `/projects/${id}`);
+}
 
  getUser(userId){
     return API.get("pma-api", `/users/${userId}`);
   }
+
+statusColour(status){
+  if(!status.localeCompare("Pending")){
+    return "blue";
+  } else if(!status.localeCompare("Completed")){
+    return "green";
+  }
+  return "orange";
+}
 
 
 renderprojectsList(projects) {
@@ -50,8 +73,10 @@ renderprojectsList(projects) {
             key={project.projectId}
             to={`/projects/${project.projectId}`}
           >
-            <ListGroupItem header={project.title.trim().split("\n")[0]}>
-              {"Created: " + new Date(project.createdAt).toLocaleString()}
+            <ListGroupItem header={project.title.trim().split("\n")[0] + " (" + project.role + ")"}>
+              <div className="created">{"Created: " + new Date(project.createdAt).toLocaleString()} </div>
+              <div className="status"> {" Status: "} <a style={{color: this.statusColour(project.projectStatus)}}>  {project.projectStatus} </a> </div>
+              <div className="clear"> </div>
             </ListGroupItem>
           </LinkContainer>
         : <LinkContainer

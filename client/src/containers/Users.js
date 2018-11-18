@@ -22,6 +22,7 @@ export default class projects extends Component {
       projects: null,
       user: null,
       team: null,
+      currentUser: null,
       sessionId: null,
       content: "",
       attachmentURL: null
@@ -34,15 +35,16 @@ export default class projects extends Component {
     try {
 
       const teamIds = await this.team();
-    //  const team = await this.getTeamUsers(teamIds);
       const projects = await this.projects();
       const user = await this.getUser();
       const { id } = await Auth.currentUserInfo();
+      const currentUser = await this.getCurrentUser(id);
       const sessionId = id;
 
 
       this.setState({
         projects,
+        currentUser,
         user,
         sessionId
      });
@@ -54,6 +56,12 @@ export default class projects extends Component {
     }
 
   }
+
+
+  getCurrentUser(userId){
+    return API.get("pma-api", `/users/${userId}`);
+  }
+
 
   projects() {
     return API.get("pma-api", `/projects/list/${this.props.match.params.id}`);
@@ -113,27 +121,11 @@ export default class projects extends Component {
     return API.del("pma-api", `/users/${this.props.match.params.id}`);
   }
 
-  handleDelete = async event => {
-    event.preventDefault();
-
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this project?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.setState({ isDeleting: true });
-
-    try {
-      await this.deleteUser();
+    handleEdit = async event => {
       this.props.history.push("/");
-    } catch (e) {
-      alert(e);
-      this.setState({ isDeleting: false });
+      window.location.assign('/users/' + this.props.match.params.id  + '/edit');
     }
-  }
+
 
  async getUserObject(user){
   var res = null;
@@ -167,7 +159,7 @@ export default class projects extends Component {
               key={project.projectId}
               to={`/projects/${project.projectId}`}
             >
-              <ListGroupItem header={project.name.trim().split("\n")[0]}>
+              <ListGroupItem header={project.title.trim().split("\n")[0]}>
                 {"Created: " + new Date(project.createdAt).toLocaleString()}
               </ListGroupItem>
             </LinkContainer>
@@ -187,6 +179,14 @@ export default class projects extends Component {
     );
   }
 
+  canEdit(){
+    if(this.state.user){
+      if(!this.state.user.userId.localeCompare(this.state.sessionId) || this.state.currentUser.admin){
+        return true;
+      }
+    }
+    return false;
+  }
 
 
   render() {
@@ -217,25 +217,16 @@ export default class projects extends Component {
                   componentClass="textarea"
                 />
               </FormGroup>}
-
-            <LoaderButton
-              block
-              bsStyle="primary"
-              bsSize="large"
-              type="submit"
-              isLoading={this.state.isLoading}
-              text="Save"
-              loadingText="Saving…"
-            />
-            <LoaderButton
-              block
-              bsStyle="danger"
-              bsSize="large"
-              isLoading={this.state.isDeleting}
-              onClick={this.handleDelete}
-              text="Delete"
-              loadingText="Deleting…"
-            />
+              {this.canEdit() &&
+              <LoaderButton
+                block
+                bsStyle="primary"
+                bsSize="large"
+                isLoading={this.state.isLoading}
+                text="Edit"
+                onClick={this.handleEdit}
+                loadingText="Editing…"
+              />}
           </form>}
           <h4> My Projects </h4>
         {this.state.projects &&

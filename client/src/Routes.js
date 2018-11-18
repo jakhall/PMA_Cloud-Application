@@ -10,6 +10,7 @@ import ManageTeam from "./containers/ManageTeam";
 import ManageProject from "./containers/ManageProject";
 import Projects from "./containers/Projects";
 import Users from "./containers/Users";
+import EditUser from "./containers/EditUser";
 import Search from "./containers/Search";
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
@@ -25,6 +26,7 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/:id/manage" exact component={ManageTeam} props={childProps} />
     <AuthenticatedRoute path="/projects/:id/edit" exact component={ManageProject} props={childProps} />
     <AuthenticatedRoute path="/users/:id/" exact component={Users} props={childProps} />
+    <AuthenticatedRoute path="/users/:id/edit" exact component={EditUser} props={childProps} />
     <AuthenticatedRoute path="/search/:type/:search" exact component={Search} props={childProps} />
     { /* Finally, catch all unmatched routes */ }
     <Route component={NotFound} />

@@ -75,6 +75,15 @@ functions:
           cors: true
           authorizer: aws_iam
 
+  update:
+    handler: update.main
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+
   search:
     handler: search.main
     events:

@@ -39,15 +39,16 @@ export default class projects extends Component {
       this.setState({user});
       const teamIds = await this.team();
       const team = await this.getTeamUsers(teamIds);
+
+      if(this.state.userRole == null && this.state.user.admin){
+        this.setState({userRole: "Admin"});
+      }
+
+
       this.setState({
         team
      });
 
-     this.state.isReady = true;
-
-     if(this.state.userRole == null && this.state.user.admin){
-       this.state.userRole = 0;
-     }
 
     } catch (e) {
       alert(e);
@@ -69,7 +70,8 @@ export default class projects extends Component {
         projectStatus,
         projectName: title,
         projectDesc: description,
-        statColour: colour
+        statColour: colour,
+        isReady: true
       });
 
     } catch (e) {
@@ -197,16 +199,15 @@ export default class projects extends Component {
   }
 
   async getTeamUsers(team){
-    var newd = [];
+    var newList = [];
     var member = null;
-    var glob = this;
 
     for(const m of team){
       member = await this.getUserObject(m);
-      newd.push(member)
+      newList.push(member)
     }
 
-    return newd;
+    return newList;
   }
 
   renderTeamList(team) {
@@ -221,8 +222,10 @@ export default class projects extends Component {
                 {"Added: " + new Date(member.addedAt).toLocaleString()}
               </ListGroupItem>
             </LinkContainer>
-          : <LinkContainer
-
+          :
+          <div>
+          {this.canEdit() &&
+          <LinkContainer
               to={`/projects/${this.props.match.params.id}/manage`}
             >
               <ListGroupItem>
@@ -230,7 +233,8 @@ export default class projects extends Component {
                   <b>{"\uFF0B"}</b> Manage Team
                 </h4>
               </ListGroupItem>
-            </LinkContainer>
+            </LinkContainer>}
+            </div>
     );
   }
 
@@ -239,6 +243,15 @@ export default class projects extends Component {
   roleCheck(){
     if(this.state.userRole && this.state.user){
       return true;
+    }
+    return false;
+  }
+
+  canEdit(){
+    if(this.roleCheck()){
+      if(this.state.userRole.localeCompare("Developer") || this.state.user.admin){
+        return true;
+      }
     }
     return false;
   }
@@ -263,7 +276,7 @@ export default class projects extends Component {
       <h3 className="details">Details</h3>
 
       {this.state.isReady &&
-        (this.state.userRole == null || this.state.userRole == 0) &&
+        (this.state.userRole == null || !this.state.userRole.localeCompare("Admin")) &&
       <div className="join-container">
         <LoaderButton
           block
@@ -300,7 +313,7 @@ export default class projects extends Component {
                   />}
             </div>}
           </form>
-        {this.state.team &&
+        {this.state.isReady &&
           <div className="Project">
             { this.renderTeam()}
           </div>}

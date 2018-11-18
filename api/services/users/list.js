@@ -4,7 +4,7 @@ import { success, failure } from "../../libs/response-lib";
 export async function main(event, context) {
 
   const params = {
-    TableName: "PROJECT_Table",
+    TableName: "TEAM_Table",
 
     FilterExpression: "#userId = :userId",
     ExpressionAttributeNames: {

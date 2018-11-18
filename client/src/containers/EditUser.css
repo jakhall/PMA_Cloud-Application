@@ -1,0 +1,22 @@
+.EditUser form {
+  width: 100%;
+  margin:auto;
+  padding-bottom: 15px;
+}
+
+.EditUser .desc {
+  height: 200px;
+  font-size: 24px;
+}
+
+.EditUser .name {
+  font-size: 24px;
+}
+
+.EditUser .drop {
+  width: 150px;
+}
+
+.EditUser .ldButton {
+  margin-top: 20px;
+}

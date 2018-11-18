@@ -6,6 +6,7 @@ import Routes from "./Routes";
 import React, { Component, Fragment} from "react";
 import "./App.css";
 import { Auth } from "aws-amplify";
+import logo from'./proton-web.png';
 
 class App extends Component {
 
@@ -70,10 +71,12 @@ class App extends Component {
 
       !this.state.isAuthenticating &&
       <div className="App container">
-        <Navbar fluid collapseOnSelect>
+        <Navbar fluid collapseOnSelect className="nav">
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/">Proton</Link>
+              <Link to="/">
+              <img className="logo" src={logo}/>
+              </Link>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>

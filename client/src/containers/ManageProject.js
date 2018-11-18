@@ -15,7 +15,7 @@ export default class ManageProject extends Component {
     this.state = {
       isLoading: null,
       isSaving: null,
-      description: "",
+      teamIds: null,
       projectName: "",
       projectStatus: null,
       projectDesc: null
@@ -126,6 +126,19 @@ export default class ManageProject extends Component {
     return API.del("pma-api", `/projects/${this.props.match.params.id}`);
   }
 
+
+  deleteTeam(){
+    var response = null;
+
+    for(const m of this.state.team){
+      response = API.del("pma-api", `/teams/${this.props.match.params.id}`, {
+        body: {
+          userId: m.userId
+        }
+      })
+    }
+  }
+
   saveProject(project) {
     return API.put("pma-api", `/projects/${this.props.match.params.id}`, {
       body: project
@@ -143,7 +156,7 @@ export default class ManageProject extends Component {
         description: this.state.projectDesc,
         projectStatus: this.state.projectStatus
       });
-      this.props.history.push("/");
+      window.location.assign(`/projects/${this.props.match.params.id}`);
     } catch (e) {
       alert(e);
       this.setState({ isSaving: false });
@@ -165,6 +178,7 @@ export default class ManageProject extends Component {
 
       try {
         await this.deleteProject();
+        await this.deleteTeam();
         this.props.history.push("/");
       } catch (e) {
         alert(e);

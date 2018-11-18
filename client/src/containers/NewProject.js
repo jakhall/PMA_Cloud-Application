@@ -21,7 +21,7 @@ export default class NewProject extends Component {
   }
 
   validateForm() {
-    return this.state.name.length > 0;
+    return (this.state.name.length > 0 && this.state.description.length > 0);
   }
 
   handleChange = event => {
@@ -49,7 +49,7 @@ export default class NewProject extends Component {
         projectId: this.state.newProject.projectId,
         role: "Creator"
       });
-      this.props.history.push("/");
+      window.location.assign(`/`);
     } catch (e) {
       alert(e);
       this.setState({ isLoading: false });
