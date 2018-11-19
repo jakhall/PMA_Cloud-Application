@@ -202,7 +202,7 @@ export default class projects extends Component {
         {this.state.user &&
           <form onSubmit={this.handleSubmit}>
             <FormGroup controlId="bio">
-              <FormControl
+              <FormControl readOnly
                 onChange={this.handleChange}
                 value={this.state.user.bio}
                 componentClass="textarea"
@@ -211,7 +211,7 @@ export default class projects extends Component {
             <h4> Skills </h4>
             {this.state.user &&
               <FormGroup>
-                <FormControl
+                <FormControl readOnly
                   onChange={this.handleChange}
                   value={this.state.user.skills}
                   componentClass="textarea"
@@ -228,7 +228,7 @@ export default class projects extends Component {
                 loadingText="Editing…"
               />}
           </form>}
-          <h4> My Projects </h4>
+          <h4> Created Projects </h4>
         {this.state.projects &&
           <div className="users">
             { this.renderprojectsList(this.state.projects)}

@@ -12,8 +12,10 @@ export default class Search extends Component {
       isLoading: true,
       projects: null,
       users: null,
-      user: null
+      user: null,
+      selectedSearch: 1
     };
+    super.selectedSearch = 1;
   }
 
   async componentDidMount() {
@@ -24,6 +26,9 @@ export default class Search extends Component {
     try {
       if(!this.props.match.params.type.localeCompare("projects")){
         const projects = await this.projectSearch();
+        alert(this.props.app)
+        this.props.updateParent(1);
+
         this.setState({ projects, selectedSearch: 1});
       } else {
         const users = await this.userSearch();
@@ -35,7 +40,9 @@ export default class Search extends Component {
 
   this.setState({ isLoading: false });
 }
+update(){
 
+}
   projectSearch() {
     return API.get("pma-api", `/projects/search/${this.props.match.params.search}`);
   }
@@ -48,7 +55,6 @@ export default class Search extends Component {
  getUser(userId){
     return API.get("pma-api", `/users/${userId}`);
   }
-
 
 
   renderprojectsList(projects) {

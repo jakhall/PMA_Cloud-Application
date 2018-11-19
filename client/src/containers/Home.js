@@ -96,12 +96,12 @@ renderLander() {
   return (
     <div className="lander">
       <h1>Proton</h1>
-      <p>A project management app!</p>
+      <p>A project management application! </p>
       <div>
-        <Link to="/login" className="btn btn-info btn-lg">
+        <Link to="/login" className="btn btn-default btn-lg">
           Login
         </Link>
-        <Link to="/signup" className="btn btn-success btn-lg">
+        <Link to="/signup" className="btn btn-default btn-lg">
           Signup
         </Link>
       </div>

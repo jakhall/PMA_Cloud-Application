@@ -179,7 +179,7 @@ export default class ManageProject extends Component {
       try {
         await this.deleteProject();
         await this.deleteTeam();
-        this.props.history.push("/");
+        window.location.assign(`/`);
       } catch (e) {
         alert(e);
         this.setState({ isDeleting: false });

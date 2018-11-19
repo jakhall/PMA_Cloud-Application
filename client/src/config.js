@@ -13,5 +13,8 @@ export default {
     USER_POOL_ID: "eu-west-2_5714IGrlU",
     APP_CLIENT_ID: "6j3sb4nlshck3i2icdh4aaaofm",
     IDENTITY_POOL_ID: "eu-west-2:488c360f-e42b-43ec-b7a4-5f641794abc5"
+  },
+  options: {
+    selectedSearch: 0
   }
 };

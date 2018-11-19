@@ -7,6 +7,7 @@ import React, { Component, Fragment} from "react";
 import "./App.css";
 import { Auth } from "aws-amplify";
 import logo from'./proton-web.png';
+import config from "./config";
 
 class App extends Component {
 
@@ -21,12 +22,14 @@ class App extends Component {
       };
     }
 
+
     userHasAuthenticated = authenticated => {
       this.setState({ isAuthenticated: authenticated });
     }
 
 
   async componentDidMount() {
+
     try {
       await Auth.currentSession();
       this.userHasAuthenticated(true);
@@ -37,9 +40,14 @@ class App extends Component {
       }
     }
 
+    this.setState({selectedSearch: config.options.selectedSearch});
+
     this.setState({ isAuthenticating: false });
   }
 
+  updateParent(state){
+      this.setState({selectedSearch: state})
+   }
 
   handleLogout = async event => {
   await Auth.signOut();
@@ -49,9 +57,14 @@ class App extends Component {
   this.props.history.push("/login");
 }
 
+  handleTypeChange(type){
+    this.setState({searchOptions: type});
+  }
+
   handleSearch(query) {
     const options = ["users", "projects"];
-
+    config.options.selectedSearch = this.state.selectedSearch;
+    this.props.history.push("/");
     window.location.assign('/search/' + options[this.state.selectedSearch] + '/' + query)
 
   }
@@ -68,7 +81,6 @@ class App extends Component {
 
 
     return (
-
       !this.state.isAuthenticating &&
       <div className="App container">
         <Navbar fluid collapseOnSelect className="nav">
@@ -94,13 +106,17 @@ class App extends Component {
                   </Fragment>
               }
             </Nav>
+              {this.state.isAuthenticated &&
               <Navbar.Form pullRight onSubmit={this.handleSubmit}>
+
                 <FormGroup>
-
-
                   <FormControl
                    onKeyPress={event => {if (event.key === "Enter") {
+                      if(!event.target.value.localeCompare("")){
+                        this.handleSearch("_all");
+                      } else {
                        this.handleSearch(event.target.value); }}}
+                     }
                   type="text"
                   placeholder="Search" />
 
@@ -117,7 +133,7 @@ class App extends Component {
 
                   </DropdownButton>
 
-              </Navbar.Form>
+              </Navbar.Form>}
 
           </Navbar.Collapse>
         </Navbar>

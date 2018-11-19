@@ -15,10 +15,11 @@ export default class Signup extends Component {
 
     this.state = {
       isLoading: false,
+      username: "",
       email: "",
       password: "",
-      firstName: "David",
-      lastName: "Green",
+      firstName: "",
+      lastName: "",
       confirmPassword: "",
       confirmationCode: "",
       newUser: null
@@ -50,7 +51,7 @@ export default class Signup extends Component {
 
     try {
       const newUser = await Auth.signUp({
-        username: "David23",
+        username: this.state.username,
         password: this.state.password,
         attributes: {
           given_name: this.state.firstName,
@@ -77,10 +78,10 @@ export default class Signup extends Component {
     this.setState({ isLoading: true });
 
     try {
-      var test = await Auth.confirmSignUp("David23", this.state.confirmationCode);
+      var test = await Auth.confirmSignUp(this.state.username, this.state.confirmationCode);
       await Auth.signIn(this.state.email, this.state.password);
       this.addUsertoDB({
-        username: "David23",
+        username: this.state.username,
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         email: this.state.email
@@ -129,12 +130,39 @@ export default class Signup extends Component {
   renderForm() {
     return (
       <form onSubmit={this.handleSubmit}>
+      <FormGroup controlId="username" bsSize="large">
+        <ControlLabel>Username</ControlLabel>
+        <FormControl
+          autoFocus
+          type="textarea"
+          value={this.state.username}
+          onChange={this.handleChange}
+        />
+      </FormGroup>
         <FormGroup controlId="email" bsSize="large">
           <ControlLabel>Email</ControlLabel>
           <FormControl
             autoFocus
             type="email"
             value={this.state.email}
+            onChange={this.handleChange}
+          />
+        </FormGroup>
+        <FormGroup controlId="firstName" bsSize="large">
+          <ControlLabel>First Name</ControlLabel>
+          <FormControl
+            autoFocus
+            type="textarea"
+            value={this.state.firstName}
+            onChange={this.handleChange}
+          />
+        </FormGroup>
+        <FormGroup controlId="lastName" bsSize="large">
+          <ControlLabel>Last Name</ControlLabel>
+          <FormControl
+            autoFocus
+            type="textarea"
+            value={this.state.lastName}
             onChange={this.handleChange}
           />
         </FormGroup>

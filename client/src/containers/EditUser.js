@@ -4,7 +4,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import "./EditUser.css";
-import { API } from "aws-amplify";
+import { API, Auth} from "aws-amplify";
 
 export default class EditUser extends Component {
   constructor(props) {
@@ -88,9 +88,20 @@ export default class EditUser extends Component {
   }
 }
 
-  deleteUser() {
-  //  return API.del("pma-api", `/projects/${this.props.match.params.id}`);
+
+  async removeLinks(){
+    const links = await this.getUserLinks();
+    for(const l of links){
+      await this.deleteLink(l.projectId);
+    }
   }
+
+
+  getUserLinks(){
+    return API.get("pma-api", "/teams");
+  }
+
+
 
   saveUser(user) {
     return API.put("pma-api", `/users/${this.props.match.params.id}`, {
@@ -131,8 +142,11 @@ export default class EditUser extends Component {
       this.setState({ isDeleting: true });
 
       try {
+        await this.removeLinks();
         await this.deleteUser();
-        this.props.history.push("/");
+        await Auth.signOut();
+        this.props.history.push("/login");
+
       } catch (e) {
         alert(e);
         this.setState({ isDeleting: false });
@@ -191,15 +205,6 @@ export default class EditUser extends Component {
             text="Save changes"
             loadingText="Saving…"
             className="ldButton"
-          />
-          <LoaderButton
-            block
-            bsStyle="danger"
-            bsSize="large"
-            isLoading={this.state.isDeleting}
-            onClick={this.handleDelete}
-            text="Delete"
-            loadingText="Deleting…"
           />
           {this.state.team &&
           <div>

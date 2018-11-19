@@ -5,22 +5,10 @@ export async function main(event, context) {
 
   const data = JSON.parse(event.body);
 
-  const userId = "";
-  const projectId = "";
-
-  if(data.userId == null){
-    userId = event.pathParameters.id;
-    projectId = data.projectId;
-  } else {
-    userId = data.userId;
-    projectId =  event.pathParameters.id;
-  }
-
   const params = {
-    TableName: "TEAM_Table",
+    TableName: "USER_Table",
     Key: {
-      userId: userId,
-      projectId: projectId
+      userId: data.userId,
     }
   };
 

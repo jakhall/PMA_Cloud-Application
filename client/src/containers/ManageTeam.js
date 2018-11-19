@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { FormGroup, FormControl, ControlLabel,DropdownButton, MenuItem } from "react-bootstrap";
+import { FormGroup, FormControl, ControlLabel,DropdownButton, MenuItem, ListGroup, ListGroupItem } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import { API } from "aws-amplify";
@@ -17,7 +18,6 @@ export default class ManageTeam extends React.Component {
 
     this.state = {
       isLoading: null,
-      allUsers: null,
       team: null,
       teamUsers: null,
       isDeleting: false,
@@ -29,15 +29,14 @@ export default class ManageTeam extends React.Component {
     };
   }
 
-
-
   async componentDidMount() {
     try{
       const teamIds = await this.getTeam();
       const team = await this.getTeamUsers(teamIds)
       const allUsers = await this.getAllUsers();
+      const availableUsers = await this.getAvailableUsers(allUsers, team);
       this.setState({
-        allUsers,
+        availableUsers,
         team
       });
     } catch(e){
@@ -46,12 +45,22 @@ export default class ManageTeam extends React.Component {
 
   }
 
-
   handleAdd = async event => {
 
     const roles = ["Role", "Developer", "Manager"]
 
+    if(this.state.selected == null){
+      alert("No user selected");
+      return false;
+    }
+
+    if(!roles[this.state.selectedRole].localeCompare("Role")){
+      alert("No role provided");
+      return false;
+    }
+
     this.setState({ isAdding: true });
+
 
     try {
       await this.addMember({
@@ -62,13 +71,14 @@ export default class ManageTeam extends React.Component {
     } catch (e) {
       alert(e);
     }
-    alert("Added");
 
     this.setState({
        isAdding: false,
-       selectedRole: 0,
        selected: null
       });
+
+      await this.componentDidMount();
+      this.render();
   }
 
   addMember(member) {
@@ -85,6 +95,12 @@ export default class ManageTeam extends React.Component {
 
   handleRemove = async event => {
 
+
+    if(this.state.removeSelected == null){
+      alert("No user selected");
+      return false;
+    }
+
     this.setState({ isDeleting: true });
 
     try {
@@ -92,13 +108,20 @@ export default class ManageTeam extends React.Component {
     } catch (e) {
       alert(e);
     }
-    alert("Removed");
     this.setState({
       isDeleting: false,
       removeSelected: null
      });
+
+     await this.componentDidMount();
+     this.render();
+
   }
 
+    handleBack = async event => {
+      this.props.history.push("/");
+      window.location.assign('/projects/' + this.props.match.params.id);
+    }
 
   addMember(link) {
     const newLink = API.post("pma-api", "/teams", {
@@ -114,16 +137,16 @@ export default class ManageTeam extends React.Component {
   }
 
   async getTeamUsers(team){
-    var newd = [];
+    var newList = [];
     var member = null;
-    var glob = this;
 
     for(const m of team){
       member = await this.getUserObject(m);
-      newd.push(member)
+      member.role = m.role;
+      newList.push(member)
     }
 
-    return newd;
+    return newList;
   }
 
   getUser(userId){
@@ -142,8 +165,24 @@ export default class ManageTeam extends React.Component {
 
 
   getAllUsers(){
-    return API.get("pma-api", "/users/all");
+    return  API.get("pma-api", "/users/all");
+
   }
+
+
+  getAvailableUsers(users, team){
+    var available = users;
+    for(const u of available){
+      for(const t of team){
+          if(!u.userId.localeCompare(t.userId)){
+              available.splice(available.indexOf(u), 1);
+              break;
+          }
+      }
+    }
+    return available;
+  }
+
 
 
   constructOptions(userList){
@@ -161,20 +200,50 @@ export default class ManageTeam extends React.Component {
   }
 
 
+
+    renderTeamList(team) {
+      return [{}].concat(team).map(
+        (member, i) =>
+          i !== 0 &&
+            <LinkContainer
+                key={member.userId}
+                to={`/users/${member.userId}`}
+              >
+                <ListGroupItem header={member.firstName + " " + member.lastName + " (" + member.role + ")"}>
+                  {"Added: " + new Date(member.addedAt).toLocaleString()}
+                </ListGroupItem>
+              </LinkContainer>
+
+      );
+    }
+
+
+
+  renderTeam() {
+    return (
+      <div className="team">
+        <ListGroup>
+          {!this.state.isLoading && this.renderTeamList(this.state.team)}
+        </ListGroup>
+      </div>
+    );
+  }
+
+
   render() {
     const glob = this;
     const roles = ["Role", "Developer", "Manager"]
 
       return (
         <div className="ManageTeam">
-        {this.state.allUsers &&
+        {this.state.availableUsers &&
           <form>
             <h3> Add a new member </h3>
             <div class="searchAll">
             <Select class="test"
                   name="user"
                   value= {this.state.selected}
-                  options={this.constructOptions(this.state.allUsers)}
+                  options={this.constructOptions(this.state.availableUsers)}
                   onChange={val => this.setState({selected: val})}
               />
               </div>
@@ -194,7 +263,6 @@ export default class ManageTeam extends React.Component {
               <LoaderButton
                 block
                 bsStyle="primary"
-                bsSize="big"
                 onClick={function(evt){glob.handleAdd()}}
                 isLoading={this.state.isLoading}
                 text="Add"
@@ -225,8 +293,22 @@ export default class ManageTeam extends React.Component {
                 loadingText="Removing…"
               />
               </div>
-
             </form>}
+            <div className="clear"> </div>
+            <LoaderButton
+              className="back"
+              block
+              bsStyle="primary"
+              bsSize="large"
+              text="Back to project"
+              onClick={this.handleBack}
+              loadingText="Redirecting.."
+            />
+            <h3> Team </h3>
+            {this.state.team &&
+              <div>
+                { this.renderTeam()}
+              </div>}
         </div>
       );
     }

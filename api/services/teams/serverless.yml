@@ -46,6 +46,16 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: teams
+          method: get
+          cors: true
+          authorizer: aws_iam
+
   create:
     handler: create.main
     events:
