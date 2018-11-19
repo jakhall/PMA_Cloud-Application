@@ -15,7 +15,6 @@ export default class Search extends Component {
       user: null,
       selectedSearch: 1
     };
-    super.selectedSearch = 1;
   }
 
   async componentDidMount() {
@@ -26,9 +25,6 @@ export default class Search extends Component {
     try {
       if(!this.props.match.params.type.localeCompare("projects")){
         const projects = await this.projectSearch();
-        alert(this.props.app)
-        this.props.updateParent(1);
-
         this.setState({ projects, selectedSearch: 1});
       } else {
         const users = await this.userSearch();
